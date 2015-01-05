@@ -1,0 +1,33 @@
+{
+  "name": "console-log-level",
+  "version": "0.0.0",
+  "description": "The most simple logger imaginable",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/watson/console-log-level.git"
+  },
+  "keywords": [
+    "log",
+    "logging",
+    "logger",
+    "console",
+    "console.log",
+    "stdout",
+    "stderr"
+  ],
+  "author": "Thomas Watson Steen <w@tson.dk>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/watson/console-log-level/issues"
+  },
+  "homepage": "https://github.com/watson/console-log-level",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "tape": "^3.0.3"
+  }
+}
