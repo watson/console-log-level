@@ -22,6 +22,18 @@ var restore = function () {
   console.error = origError;
 };
 
+var spyOn = function (method, spy) {
+  console['~' + method] = console[method];
+  console[method] = function () {
+    spy.apply(console, arguments);
+  };
+};
+
+var spyOff = function (method) {
+  console[method] = console['~' + method];
+  delete console['~' + method];
+};
+
 test('log all', function (t) {
   var logger = Logger({ level: 'debug' });
 
@@ -101,4 +113,62 @@ test('set custom level', function (t) {
   restore();
 
   t.end();
+});
+
+test('set prefix', function (t) {
+  var now = new Date().toISOString();
+  var logger = Logger({ prefix: now });
+  var msg = 'bar';
+
+  spyOn('info', function () {
+    spyOff('info');
+    t.equal(arguments[0], now + ' foo %s', 'first arg ok');
+    t.equal(arguments[1], msg, 'second arg ok');
+  });
+
+  spyOn('warn', function () {
+    spyOff('warn');
+    t.equal(arguments[0], now + ' foo %s', 'first arg ok');
+    t.equal(arguments[1], msg, 'second arg ok');
+  });
+
+  spyOn('error', function () {
+    spyOff('error');
+    t.equal(arguments[0], now + ' foo %s', 'first arg ok');
+    t.equal(arguments[1], msg, 'second arg ok');
+    t.end();
+  });
+
+  logger.info('foo %s', msg);
+  logger.warn('foo %s', msg);
+  logger.error('foo %s', msg);
+});
+
+test('set prefix with function', function (t) {
+  var now = new Date().toISOString();
+  var logger = Logger({ prefix: function () { return now; } });
+  var msg = 'bar';
+
+  spyOn('info', function () {
+    spyOff('info');
+    t.equal(arguments[0], now + ' foo %s', 'first arg ok');
+    t.equal(arguments[1], msg, 'second arg ok');
+  });
+
+  spyOn('warn', function () {
+    spyOff('warn');
+    t.equal(arguments[0], now + ' foo %s', 'first arg ok');
+    t.equal(arguments[1], msg, 'second arg ok');
+  });
+
+  spyOn('error', function () {
+    spyOff('error');
+    t.equal(arguments[0], now + ' foo %s', 'first arg ok');
+    t.equal(arguments[1], msg, 'second arg ok');
+    t.end();
+  });
+
+  logger.info('foo %s', msg);
+  logger.warn('foo %s', msg);
+  logger.error('foo %s', msg);
 });
