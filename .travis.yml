@@ -1,7 +1,9 @@
+sudo: false
 language: node_js
 node_js:
-- '0.11'
-- '0.10'
-- '0.8'
+  - 'iojs'
+  - '0.12'
+  - '0.10'
+  - '0.8'
 before_install:
-- npm install -g npm@~1.4.6
+  - 'if [ "${TRAVIS_NODE_VERSION}" == "0.8" ]; then npm install -g npm@2.12.1; fi'
