@@ -4,8 +4,7 @@ A dead simple logger. Will log to STDOUT or STDERR depending on the
 chosen log level. It uses `console.info`, `console.warn` and
 `console.error` and hence supports the same API.
 
-Log levels supported: debug, info, warn, error and fatal (defaults to
-'info').
+Log levels supported: debug, info, warn, error and fatal.
 
 [![build status](https://secure.travis-ci.org/watson/console-log-level.png)](http://travis-ci.org/watson/console-log-level)
 
@@ -26,6 +25,26 @@ log.warn('c');  // will output 'c\n' on STDERR
 log.error('d'); // will output 'd\n' on STDERR
 log.fatal('e'); // will output 'e\n' on STDERR
 ```
+
+## Options
+
+Configure the logger by passing an options object:
+
+```js
+var log = require('console-log-level')({
+  prefix: function () { return new Date().toISOString(); },
+  level: 'info'
+});
+```
+
+### level
+
+A `string` to specify the log level. Defaults to `info`.
+
+### prefix
+
+Specify this option if you want to set a prefix for all log messages.
+This must be a `string` or a `function` that returns a string.
 
 ## License
 
