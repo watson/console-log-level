@@ -1,7 +1,8 @@
 'use strict';
 
-var levels = ['debug', 'info', 'warn', 'error', 'fatal'];
 var util = require('util');
+
+var levels = ['debug', 'info', 'warn', 'error', 'fatal'];
 
 module.exports = function (opts) {
   opts = opts || {};
@@ -25,7 +26,7 @@ module.exports = function (opts) {
       }
 
       if (prefix) {
-        if ('function' === typeof prefix) prefix = prefix();
+        if (typeof prefix === 'function') prefix = prefix();
         arguments[0] = util.format(prefix, arguments[0]);
       }
 
