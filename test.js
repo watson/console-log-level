@@ -24,9 +24,7 @@ var restore = function () {
 
 var spyOn = function (method, spy) {
   console['~' + method] = console[method];
-  console[method] = function () {
-    spy.apply(console, arguments);
-  };
+  console[method] = spy;
 };
 
 var spyOff = function (method) {
