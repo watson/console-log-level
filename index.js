@@ -19,10 +19,12 @@ module.exports = function (opts) {
       if (!shouldLog(level)) return;
 
       var prefix = opts.prefix;
+      var normalizedLevel;
 
       switch (level) {
-        case 'debug': level = 'info'; break;
-        case 'fatal': level = 'error'; break;
+        case 'debug': normalizedLevel = 'info'; break;
+        case 'fatal': normalizedLevel = 'error'; break;
+        default: normalizedLevel = level;
       }
 
       if (prefix) {
@@ -30,7 +32,7 @@ module.exports = function (opts) {
         arguments[0] = util.format(prefix, arguments[0]);
       }
 
-      console[level].apply(console, arguments);
+      console[normalizedLevel].apply(console, arguments);
     };
   });
 
