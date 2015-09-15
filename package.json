@@ -4,7 +4,7 @@
   "description": "The most simple logger imaginable",
   "main": "index.js",
   "scripts": {
-    "test": "tape test.js"
+    "test": "standard && tape test.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
   "homepage": "https://github.com/watson/console-log-level",
   "dependencies": {},
   "devDependencies": {
+    "standard": "^5.2.2",
     "tape": "^3.0.3"
   },
   "coordinates": [
