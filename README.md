@@ -7,6 +7,7 @@ chosen log level. It uses `console.info`, `console.warn` and
 Log levels supported: debug, info, warn, error and fatal.
 
 [![Build status](https://travis-ci.org/watson/console-log-level.svg?branch=master)](https://travis-ci.org/watson/console-log-level)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
 ## Installation
 
