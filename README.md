@@ -6,7 +6,7 @@ chosen log level. It uses `console.info`, `console.warn` and
 
 Log levels supported: debug, info, warn, error and fatal.
 
-[![build status](https://secure.travis-ci.org/watson/console-log-level.png)](http://travis-ci.org/watson/console-log-level)
+[![Build status](https://travis-ci.org/watson/console-log-level.svg?branch=master)](https://travis-ci.org/watson/console-log-level)
 
 ## Installation
 
