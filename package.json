@@ -1,6 +1,6 @@
 {
   "name": "console-log-level",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "The most simple logger imaginable",
   "main": "index.js",
   "scripts": {
@@ -31,7 +31,7 @@
     "tape": "^3.0.3"
   },
   "coordinates": [
-    55.687684,
-    12.5955911
+    55.68783401556421,
+    12.595827270202676
   ]
 }
