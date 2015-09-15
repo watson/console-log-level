@@ -18,13 +18,13 @@ npm install console-log-level
 ## Example usage
 
 ```js
-var log = require('console-log-level')({ level: 'info' });
+var log = require('console-log-level')({ level: 'info' })
 
-log.debug('a'); // will not do anything
-log.info('b');  // will output 'b\n' on STDOUT
-log.warn('c');  // will output 'c\n' on STDERR
-log.error('d'); // will output 'd\n' on STDERR
-log.fatal('e'); // will output 'e\n' on STDERR
+log.debug('a') // will not do anything
+log.info('b')  // will output 'b\n' on STDOUT
+log.warn('c')  // will output 'c\n' on STDERR
+log.error('d') // will output 'd\n' on STDERR
+log.fatal('e') // will output 'e\n' on STDERR
 ```
 
 ## Options
@@ -33,9 +33,9 @@ Configure the logger by passing an options object:
 
 ```js
 var log = require('console-log-level')({
-  prefix: function () { return new Date().toISOString(); },
+  prefix: function () { return new Date().toISOString() },
   level: 'info'
-});
+})
 ```
 
 ### level
