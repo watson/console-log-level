@@ -4,7 +4,7 @@
   "description": "The most simple logger imaginable",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "tape test.js"
   },
   "repository": {
     "type": "git",
