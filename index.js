@@ -2,7 +2,7 @@
 
 var util = require('util')
 
-var levels = ['debug', 'info', 'warn', 'error', 'fatal']
+var levels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
 
 module.exports = function (opts) {
   opts = opts || {}
@@ -22,6 +22,7 @@ module.exports = function (opts) {
       var normalizedLevel
 
       switch (level) {
+        case 'trace': normalizedLevel = 'info'; break
         case 'debug': normalizedLevel = 'info'; break
         case 'fatal': normalizedLevel = 'error'; break
         default: normalizedLevel = level

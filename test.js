@@ -33,7 +33,14 @@ var spyOff = function (method) {
 }
 
 test('log all', function (t) {
-  var logger = Logger({ level: 'debug' })
+  var logger = Logger({ level: 'trace' })
+
+  mock()
+  logger.trace('foo')
+  t.ok(console.infoCalled, 'info called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.notOk(console.errorCalled, 'error not called')
+  restore()
 
   mock()
   logger.debug('foo')
@@ -75,6 +82,13 @@ test('log all', function (t) {
 
 test('default level', function (t) {
   var logger = Logger()
+
+  mock()
+  logger.trace('foo')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.notOk(console.errorCalled, 'error not called')
+  restore()
 
   mock()
   logger.debug('foo')

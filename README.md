@@ -4,7 +4,7 @@ A dead simple logger. Will log to STDOUT or STDERR depending on the
 chosen log level. It uses `console.info`, `console.warn` and
 `console.error` and hence supports the same API.
 
-Log levels supported: debug, info, warn, error and fatal.
+Log levels supported: trace, debug, info, warn, error and fatal.
 
 [![Build status](https://travis-ci.org/watson/console-log-level.svg?branch=master)](https://travis-ci.org/watson/console-log-level)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
@@ -20,11 +20,12 @@ npm install console-log-level
 ```js
 var log = require('console-log-level')({ level: 'info' })
 
-log.debug('a') // will not do anything
-log.info('b')  // will output 'b\n' on STDOUT
-log.warn('c')  // will output 'c\n' on STDERR
-log.error('d') // will output 'd\n' on STDERR
-log.fatal('e') // will output 'e\n' on STDERR
+log.trace('a') // will not do anything
+log.debug('b') // will not do anything
+log.info('c')  // will output 'c\n' on STDOUT
+log.warn('d')  // will output 'd\n' on STDERR
+log.error('e') // will output 'e\n' on STDERR
+log.fatal('f') // will output 'f\n' on STDERR
 ```
 
 ## Options
