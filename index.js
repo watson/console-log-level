@@ -5,8 +5,19 @@ var util = require('util')
 var levels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
 
 module.exports = function (opts) {
+  var stream, prefix
+
   opts = opts || {}
-  opts.level = opts.level || 'info'
+
+  if (typeof opts.write === 'function') {
+    stream = opts
+    prefix = null
+    opts = { level: 'info' }
+  } else {
+    opts.level = opts.level || 'info'
+    stream = opts.stream || process.stderr
+    prefix = opts.prefix || null
+  }
 
   var logger = {}
 
@@ -18,22 +29,12 @@ module.exports = function (opts) {
     logger[level] = function () {
       if (!shouldLog(level)) return
 
-      var prefix = opts.prefix
-      var normalizedLevel
-
-      switch (level) {
-        case 'trace': normalizedLevel = 'info'; break
-        case 'debug': normalizedLevel = 'info'; break
-        case 'fatal': normalizedLevel = 'error'; break
-        default: normalizedLevel = level
-      }
-
       if (prefix) {
-        if (typeof prefix === 'function') prefix = prefix()
-        arguments[0] = util.format(prefix, arguments[0])
+        var format = (typeof prefix === 'function' ? prefix() : prefix)
+        arguments[0] = util.format(format, arguments[0])
       }
 
-      console[normalizedLevel].apply(console, arguments)
+      stream.write(util.format.apply(util, arguments) + '\n')
     }
   })
 
