@@ -4,30 +4,36 @@ var util = require('util')
 
 var levels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
 
+function guard (idx, msg) {
+  if (idx === -1) throw new Error(msg)
+
+  return idx
+}
+
+function parseLevel (level) {
+  return guard(levels.indexOf(level), 'Unknown log level: ' + level)
+}
+
 module.exports = function (opts) {
-  var stream, prefix
+  var stream, prefix, level
 
   opts = opts || {}
 
   if (typeof opts.write === 'function') {
     stream = opts
     prefix = null
-    opts = { level: 'info' }
+    level = parseLevel('info')
   } else {
-    opts.level = opts.level || 'info'
     stream = opts.stream || process.stderr
     prefix = opts.prefix || null
+    level = parseLevel(opts.level || 'info')
   }
 
   var logger = {}
 
-  var shouldLog = function (level) {
-    return levels.indexOf(level) >= levels.indexOf(opts.level)
-  }
-
-  levels.forEach(function (level) {
-    logger[level] = function () {
-      if (!shouldLog(level)) return
+  levels.forEach(function (localLevel) {
+    logger[localLevel] = function () {
+      if (parseLevel(localLevel) < level) return
 
       if (prefix) {
         var format = (typeof prefix === 'function' ? prefix() : prefix)
