@@ -48,6 +48,10 @@ A `string` to specify the log level. Defaults to `info`.
 Specify this option if you want to set a prefix for all log messages.
 This must be a `string` or a `function` that returns a string.
 
+### stderr
+
+A `boolean` to log everything to stderr. Defauls to `false`.
+
 ## License
 
 MIT
