@@ -1,8 +1,6 @@
 'use strict'
 
 var test = require('tape')
-var PassThrough = require('stream').PassThrough
-
 var Logger = require('./')
 
 function spyOn (obj, method, fn) {
@@ -15,8 +13,17 @@ function spyOff (obj, method) {
   delete obj['~' + method]
 }
 
+function createFakeStream () {
+  var queue = []
+
+  function read () { return (queue.length ? queue.shift() : null) }
+  function write (data) { queue.push(data) }
+
+  return { read: read, write: write }
+}
+
 test('log all', function (t) {
-  var stream = new PassThrough()
+  var stream = createFakeStream()
   var logger = Logger({ level: 'trace', stream: stream })
 
   logger.trace('foo')
@@ -41,7 +48,7 @@ test('log all', function (t) {
 })
 
 test('default level', function (t) {
-  var stream = new PassThrough()
+  var stream = createFakeStream()
   var logger = Logger(stream)
 
   logger.trace('foo')
@@ -57,7 +64,7 @@ test('default level', function (t) {
 })
 
 test('set custom level', function (t) {
-  var stream = new PassThrough()
+  var stream = createFakeStream()
   var logger = Logger({ level: 'warn', stream: stream })
 
   logger.info('foo')
@@ -71,7 +78,7 @@ test('set custom level', function (t) {
 
 test('set prefix', function (t) {
   var now = new Date().toISOString()
-  var stream = new PassThrough()
+  var stream = createFakeStream()
   var logger = Logger({ prefix: now, stream: stream })
   var msg = 'bar'
 
@@ -89,7 +96,7 @@ test('set prefix', function (t) {
 
 test('set prefix with function', function (t) {
   var count = 0
-  var stream = new PassThrough()
+  var stream = createFakeStream()
   var prefix = function () { return String(++count) }
   var logger = Logger({ prefix: prefix, stream: stream })
   var msg = 'bar'
