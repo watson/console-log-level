@@ -4,36 +4,43 @@ var util = require('util')
 
 var levels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
 
+function guard (idx, msg) {
+  if (idx === -1) throw new Error(msg)
+
+  return idx
+}
+
+function parseLevel (level) {
+  return guard(levels.indexOf(level), 'Unknown log level: ' + level)
+}
+
 module.exports = function (opts) {
+  var stream, prefix, level
+
   opts = opts || {}
-  opts.level = opts.level || 'info'
+
+  if (typeof opts.write === 'function') {
+    stream = opts
+    prefix = null
+    level = parseLevel('info')
+  } else {
+    stream = opts.stream || process.stderr
+    prefix = opts.prefix || null
+    level = parseLevel(opts.level || 'info')
+  }
 
   var logger = {}
 
-  var shouldLog = function (level) {
-    return levels.indexOf(level) >= levels.indexOf(opts.level)
-  }
-
-  levels.forEach(function (level) {
-    logger[level] = function () {
-      if (!shouldLog(level)) return
-
-      var prefix = opts.prefix
-      var normalizedLevel
-
-      switch (level) {
-        case 'trace': normalizedLevel = 'info'; break
-        case 'debug': normalizedLevel = 'info'; break
-        case 'fatal': normalizedLevel = 'error'; break
-        default: normalizedLevel = level
-      }
+  levels.forEach(function (localLevel) {
+    logger[localLevel] = function () {
+      if (parseLevel(localLevel) < level) return
 
       if (prefix) {
-        if (typeof prefix === 'function') prefix = prefix()
-        arguments[0] = util.format(prefix, arguments[0])
+        var format = (typeof prefix === 'function' ? prefix() : prefix)
+        arguments[0] = util.format(format, arguments[0])
       }
 
-      console[normalizedLevel].apply(console, arguments)
+      stream.write(util.format.apply(util, arguments) + '\n')
     }
   })
 

@@ -3,184 +3,139 @@
 var test = require('tape')
 var Logger = require('./')
 
-var origInfo = console.info
-var origWarn = console.warn
-var origError = console.error
-
-var mock = function () {
-  console.info = function () { this.infoCalled = true }
-  console.warn = function () { this.warnCalled = true }
-  console.error = function () { this.errorCalled = true }
+function spyOn (obj, method, fn) {
+  obj['~' + method] = obj[method]
+  obj[method] = fn
 }
 
-var restore = function () {
-  delete console.infoCalled
-  delete console.warnCalled
-  delete console.errorCalled
-  console.info = origInfo
-  console.warn = origWarn
-  console.error = origError
+function spyOff (obj, method) {
+  obj[method] = obj['~' + method]
+  delete obj['~' + method]
 }
 
-var spyOn = function (method, spy) {
-  console['~' + method] = console[method]
-  console[method] = spy
-}
+function createFakeStream () {
+  var queue = []
 
-var spyOff = function (method) {
-  console[method] = console['~' + method]
-  delete console['~' + method]
+  function read () { return (queue.length ? queue.shift() : null) }
+  function write (data) { queue.push(data) }
+
+  return { read: read, write: write }
 }
 
 test('log all', function (t) {
-  var logger = Logger({ level: 'trace' })
+  var stream = createFakeStream()
+  var logger = Logger({ level: 'trace', stream: stream })
 
-  mock()
   logger.trace('foo')
-  t.ok(console.infoCalled, 'info called')
-  t.notOk(console.warnCalled, 'warn not called')
-  t.notOk(console.errorCalled, 'error not called')
-  restore()
+  t.equal(stream.read().toString(), 'foo\n')
 
-  mock()
   logger.debug('foo')
-  t.ok(console.infoCalled, 'info called')
-  t.notOk(console.warnCalled, 'warn not called')
-  t.notOk(console.errorCalled, 'error not called')
-  restore()
+  t.equal(stream.read().toString(), 'foo\n')
 
-  mock()
   logger.info('foo')
-  t.ok(console.infoCalled, 'info called')
-  t.notOk(console.warnCalled, 'warn not called')
-  t.notOk(console.errorCalled, 'error not called')
-  restore()
+  t.equal(stream.read().toString(), 'foo\n')
 
-  mock()
   logger.warn('foo')
-  t.notOk(console.infoCalled, 'info not called')
-  t.ok(console.warnCalled, 'warn called')
-  t.notOk(console.errorCalled, 'error not called')
-  restore()
+  t.equal(stream.read().toString(), 'foo\n')
 
-  mock()
   logger.error('foo')
-  t.notOk(console.infoCalled, 'info not called')
-  t.notOk(console.warnCalled, 'warn not called')
-  t.ok(console.errorCalled, 'error called')
-  restore()
+  t.equal(stream.read().toString(), 'foo\n')
 
-  mock()
   logger.fatal('foo')
-  t.notOk(console.infoCalled, 'info not called')
-  t.notOk(console.warnCalled, 'warn not called')
-  t.ok(console.errorCalled, 'error called')
-  restore()
+  t.equal(stream.read().toString(), 'foo\n')
 
   t.end()
 })
 
 test('default level', function (t) {
-  var logger = Logger()
+  var stream = createFakeStream()
+  var logger = Logger(stream)
 
-  mock()
   logger.trace('foo')
-  t.notOk(console.infoCalled, 'info not called')
-  t.notOk(console.warnCalled, 'warn not called')
-  t.notOk(console.errorCalled, 'error not called')
-  restore()
+  t.equal(stream.read(), null)
 
-  mock()
   logger.debug('foo')
-  t.notOk(console.infoCalled, 'info not called')
-  t.notOk(console.warnCalled, 'warn not called')
-  t.notOk(console.errorCalled, 'error not called')
-  restore()
+  t.equal(stream.read(), null)
 
-  mock()
   logger.info('foo')
-  t.ok(console.infoCalled, 'info called')
-  t.notOk(console.warnCalled, 'warn not called')
-  t.notOk(console.errorCalled, 'error not called')
-  restore()
+  t.equal(stream.read().toString(), 'foo\n')
 
   t.end()
 })
 
 test('set custom level', function (t) {
-  var logger = Logger({ level: 'warn' })
+  var stream = createFakeStream()
+  var logger = Logger({ level: 'warn', stream: stream })
 
-  mock()
   logger.info('foo')
-  t.notOk(console.infoCalled, 'info not called')
-  t.notOk(console.warnCalled, 'warn not called')
-  t.notOk(console.errorCalled, 'error not called')
-  restore()
+  t.equal(stream.read(), null)
 
-  mock()
   logger.warn('foo')
-  t.notOk(console.infoCalled, 'info not called')
-  t.ok(console.warnCalled, 'warn called')
-  t.notOk(console.errorCalled, 'error not called')
-  restore()
+  t.equal(stream.read().toString(), 'foo\n')
 
   t.end()
 })
 
 test('set prefix', function (t) {
   var now = new Date().toISOString()
-  var logger = Logger({ prefix: now })
+  var stream = createFakeStream()
+  var logger = Logger({ prefix: now, stream: stream })
   var msg = 'bar'
 
-  spyOn('info', function () {
-    spyOff('info')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
-  })
-
-  spyOn('warn', function () {
-    spyOff('warn')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
-  })
-
-  spyOn('error', function () {
-    spyOff('error')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
-    t.end()
-  })
-
   logger.info('foo %s', msg)
+  t.equal(stream.read().toString(), now + ' foo bar\n')
+
   logger.warn('foo %s', msg)
+  t.equal(stream.read().toString(), now + ' foo bar\n')
+
   logger.error('foo %s', msg)
+  t.equal(stream.read().toString(), now + ' foo bar\n')
+
+  t.end()
 })
 
 test('set prefix with function', function (t) {
-  var now = new Date().toISOString()
-  var logger = Logger({ prefix: function () { return now } })
+  var count = 0
+  var stream = createFakeStream()
+  var prefix = function () { return String(++count) }
+  var logger = Logger({ prefix: prefix, stream: stream })
   var msg = 'bar'
 
-  spyOn('info', function () {
-    spyOff('info')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
-  })
-
-  spyOn('warn', function () {
-    spyOff('warn')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
-  })
-
-  spyOn('error', function () {
-    spyOff('error')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
-    t.end()
-  })
-
   logger.info('foo %s', msg)
+  t.equal(stream.read().toString(), '1 foo bar\n')
+
   logger.warn('foo %s', msg)
+  t.equal(stream.read().toString(), '2 foo bar\n')
+
   logger.error('foo %s', msg)
+  t.equal(stream.read().toString(), '3 foo bar\n')
+
+  t.end()
+})
+
+test('without any options', function (t) {
+  var output = []
+  var logger = Logger()
+
+  function append (line) {
+    output.push(line)
+  }
+
+  spyOn(process.stderr, 'write', append)
+  logger.trace('foo')
+  spyOff(process.stderr, 'write')
+  t.equal(output.length, 0)
+
+  spyOn(process.stderr, 'write', append)
+  logger.debug('foo')
+  spyOff(process.stderr, 'write')
+  t.equal(output.length, 0)
+
+  spyOn(process.stderr, 'write', append)
+  logger.info('foo')
+  spyOff(process.stderr, 'write')
+  t.equal(output.length, 1)
+  t.equal(output[0], 'foo\n')
+
+  t.end()
 })
