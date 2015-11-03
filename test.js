@@ -5,6 +5,16 @@ var PassThrough = require('stream').PassThrough
 
 var Logger = require('./')
 
+function spyOn (obj, method, fn) {
+  obj['~' + method] = obj[method]
+  obj[method] = fn
+}
+
+function spyOff (obj, method) {
+  obj[method] = obj['~' + method]
+  delete obj['~' + method]
+}
+
 test('log all', function (t) {
   var stream = new PassThrough()
   var logger = Logger({ level: 'trace', stream: stream })
@@ -92,6 +102,33 @@ test('set prefix with function', function (t) {
 
   logger.error('foo %s', msg)
   t.equal(stream.read().toString(), '3 foo bar\n')
+
+  t.end()
+})
+
+test('without any options', function (t) {
+  var output = []
+  var logger = Logger()
+
+  function append (line) {
+    output.push(line)
+  }
+
+  spyOn(process.stderr, 'write', append)
+  logger.trace('foo')
+  spyOff(process.stderr, 'write')
+  t.equal(output.length, 0)
+
+  spyOn(process.stderr, 'write', append)
+  logger.debug('foo')
+  spyOff(process.stderr, 'write')
+  t.equal(output.length, 0)
+
+  spyOn(process.stderr, 'write', append)
+  logger.info('foo')
+  spyOff(process.stderr, 'write')
+  t.equal(output.length, 1)
+  t.equal(output[0], 'foo\n')
 
   t.end()
 })
