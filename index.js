@@ -2,24 +2,30 @@
 
 var util = require('util')
 
-var levels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
+var levels = [
+  'trace',
+  'debug',
+  'info',
+  'warn',
+  'error',
+  'fatal'
+].reduce(function (map, level, index) {
+  map[level] = index + 1
+  return map
+}, Object.create(null))
 
 module.exports = function (opts) {
   opts = opts || {}
-  opts.level = opts.level || 'info'
 
-  var logger = {}
+  var threshold = levels[opts.level] || levels.info
 
-  var shouldLog = function (level) {
-    return levels.indexOf(level) >= levels.indexOf(opts.level)
-  }
-
-  levels.forEach(function (level) {
+  return Object.keys(levels).reduce(function (logger, level) {
     logger[level] = function () {
-      if (!shouldLog(level)) return
-
+      var index = levels[level]
       var prefix = opts.prefix
       var normalizedLevel
+
+      if (index < threshold) return
 
       switch (level) {
         case 'trace': normalizedLevel = 'info'; break
@@ -35,7 +41,6 @@ module.exports = function (opts) {
 
       console[normalizedLevel].apply(console, arguments)
     }
-  })
-
-  return logger
+    return logger
+  }, Object.create(null))
 }
