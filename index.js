@@ -34,7 +34,7 @@ module.exports = function (opts) {
         arguments[0] = util.format(prefix, arguments[0])
       }
 
-      console[normalizedLevel].apply(console, arguments)
+      console[normalizedLevel](util.format.apply(util, arguments))
     }
   })
 

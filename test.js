@@ -132,22 +132,19 @@ test('set prefix', function (t) {
   var logger = Logger({ prefix: now })
   var msg = 'bar'
 
-  spyOn('info', function () {
+  spyOn('info', function (arg) {
     spyOff('info')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.equal(arg, now + ' foo ' + msg, 'arg ok')
   })
 
-  spyOn('warn', function () {
+  spyOn('warn', function (arg) {
     spyOff('warn')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.equal(arg, now + ' foo ' + msg, 'arg ok')
   })
 
-  spyOn('error', function () {
+  spyOn('error', function (arg) {
     spyOff('error')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.equal(arg, now + ' foo ' + msg, 'arg ok')
     t.end()
   })
 
@@ -161,22 +158,19 @@ test('set prefix with function', function (t) {
   var logger = Logger({ prefix: function () { return now } })
   var msg = 'bar'
 
-  spyOn('info', function () {
+  spyOn('info', function (arg) {
     spyOff('info')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.equal(arg, now + ' foo ' + msg, 'arg ok')
   })
 
-  spyOn('warn', function () {
+  spyOn('warn', function (arg) {
     spyOff('warn')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.equal(arg, now + ' foo ' + msg, 'arg ok')
   })
 
-  spyOn('error', function () {
+  spyOn('error', function (arg) {
     spyOff('error')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.equal(arg, now + ' foo ' + msg, 'arg ok')
     t.end()
   })
 
