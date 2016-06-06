@@ -35,7 +35,8 @@ Configure the logger by passing an options object:
 ```js
 var log = require('console-log-level')({
   prefix: function () { return new Date().toISOString() },
-  level: 'info'
+  level: 'info',
+  format: true
 })
 ```
 
@@ -47,6 +48,14 @@ A `string` to specify the log level. Defaults to `info`.
 
 Specify this option if you want to set a prefix for all log messages.
 This must be a `string` or a `function` that returns a string.
+
+### format
+
+Specify this option if you want to have formatted string log.
+ex:
+```javascript
+log.info("myVar=%s myInt=%d myObject=%j", myVar, myInt, myObject);
+```
 
 ## License
 

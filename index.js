@@ -20,6 +20,7 @@ module.exports = function (opts) {
 
     function log () {
       var prefix = opts.prefix
+      var format = opts.format
       var normalizedLevel
 
       switch (level) {
@@ -34,7 +35,11 @@ module.exports = function (opts) {
         arguments[0] = util.format(prefix, arguments[0])
       }
 
-      console[normalizedLevel].apply(console, arguments)
+      if (format && arguments.length > 1) {
+        console[normalizedLevel](util.format.apply(null, arguments))
+      } else {
+        console[normalizedLevel].apply(console, arguments)
+      }
     }
   })
 
