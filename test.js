@@ -80,6 +80,54 @@ test('log all', function (t) {
   t.end()
 })
 
+test('log all to stderr', function (t) {
+  var logger = Logger({ level: 'trace', stderr: true })
+
+  mock()
+  logger.trace('foo')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.ok(console.errorCalled, 'error called')
+  restore()
+
+  mock()
+  logger.debug('foo')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.ok(console.errorCalled, 'error called')
+  restore()
+
+  mock()
+  logger.info('foo')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.ok(console.errorCalled, 'error called')
+  restore()
+
+  mock()
+  logger.warn('foo')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.ok(console.errorCalled, 'error called')
+  restore()
+
+  mock()
+  logger.error('foo')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.ok(console.errorCalled, 'error called')
+  restore()
+
+  mock()
+  logger.fatal('foo')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.ok(console.errorCalled, 'error called')
+  restore()
+
+  t.end()
+})
+
 test('default level', function (t) {
   var logger = Logger()
 

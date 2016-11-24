@@ -22,11 +22,15 @@ module.exports = function (opts) {
       var prefix = opts.prefix
       var normalizedLevel
 
-      switch (level) {
-        case 'trace': normalizedLevel = 'info'; break
-        case 'debug': normalizedLevel = 'info'; break
-        case 'fatal': normalizedLevel = 'error'; break
-        default: normalizedLevel = level
+      if (opts.stderr) {
+        normalizedLevel = 'error'
+      } else {
+        switch (level) {
+          case 'trace': normalizedLevel = 'info'; break
+          case 'debug': normalizedLevel = 'info'; break
+          case 'fatal': normalizedLevel = 'error'; break
+          default: normalizedLevel = level
+        }
       }
 
       if (prefix) {
