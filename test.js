@@ -178,57 +178,51 @@ test('set custom level', function (t) {
 test('set prefix', function (t) {
   var now = new Date().toISOString()
   var logger = Logger({ prefix: now })
-  var msg = 'bar'
+  var args = (function () { return arguments })(now + ' foo bar')
 
   spyOn('info', function () {
     spyOff('info')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.deepEqual(arguments, args, 'arguments ok')
   })
 
   spyOn('warn', function () {
     spyOff('warn')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.deepEqual(arguments, args, 'arguments ok')
   })
 
   spyOn('error', function () {
     spyOff('error')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.deepEqual(arguments, args, 'arguments ok')
     t.end()
   })
 
-  logger.info('foo %s', msg)
-  logger.warn('foo %s', msg)
-  logger.error('foo %s', msg)
+  logger.info('foo %s', 'bar')
+  logger.warn('foo %s', 'bar')
+  logger.error('foo %s', 'bar')
 })
 
 test('set prefix with function', function (t) {
   var now = new Date().toISOString()
   var logger = Logger({ prefix: function () { return now } })
-  var msg = 'bar'
+  var args = (function () { return arguments })(now + ' foo bar')
 
   spyOn('info', function () {
     spyOff('info')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.deepEqual(arguments, args, 'arguments ok')
   })
 
   spyOn('warn', function () {
     spyOff('warn')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.deepEqual(arguments, args, 'arguments ok')
   })
 
   spyOn('error', function () {
     spyOff('error')
-    t.equal(arguments[0], now + ' foo %s', 'first arg ok')
-    t.equal(arguments[1], msg, 'second arg ok')
+    t.deepEqual(arguments, args, 'arguments ok')
     t.end()
   })
 
-  logger.info('foo %s', msg)
-  logger.warn('foo %s', msg)
-  logger.error('foo %s', msg)
+  logger.info('foo %s', 'bar')
+  logger.warn('foo %s', 'bar')
+  logger.error('foo %s', 'bar')
 })

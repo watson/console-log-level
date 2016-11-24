@@ -3,6 +3,7 @@
 var util = require('util')
 
 var levels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
+var noop = function () {}
 
 module.exports = function (opts) {
   opts = opts || {}
@@ -15,9 +16,9 @@ module.exports = function (opts) {
   }
 
   levels.forEach(function (level) {
-    logger[level] = function () {
-      if (!shouldLog(level)) return
+    logger[level] = shouldLog(level) ? log : noop
 
+    function log () {
       var prefix = opts.prefix
       var normalizedLevel
 
@@ -35,7 +36,7 @@ module.exports = function (opts) {
         default: normalizedLevel = level
       }
 
-      console[normalizedLevel].apply(console, arguments)
+      console[normalizedLevel](util.format.apply(util, arguments))
     }
   })
 
