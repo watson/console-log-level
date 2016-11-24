@@ -34,7 +34,7 @@ module.exports = function (opts) {
       }
 
       if (prefix) {
-        if (typeof prefix === 'function') prefix = prefix()
+        if (typeof prefix === 'function') prefix = prefix(level)
         arguments[0] = util.format(prefix, arguments[0])
       }
 

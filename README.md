@@ -34,7 +34,9 @@ Configure the logger by passing an options object:
 
 ```js
 var log = require('console-log-level')({
-  prefix: function () { return new Date().toISOString() },
+  prefix: function (level) {
+    return new Date().toISOString()
+  },
   level: 'info'
 })
 ```
@@ -47,6 +49,9 @@ A `string` to specify the log level. Defaults to `info`.
 
 Specify this option if you want to set a prefix for all log messages.
 This must be a `string` or a `function` that returns a string.
+
+Will get the level of the currently logged message as the first
+argument.
 
 ### stderr
 
