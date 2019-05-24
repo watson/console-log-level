@@ -8,6 +8,11 @@ var noop = function () {}
 module.exports = function (opts) {
   opts = opts || {}
   opts.level = opts.level || 'info'
+  var levelMap = opts.levelMap || {
+    'trace': 'info',
+    'debug': 'info',
+    'fatal': 'error'
+  }
 
   var logger = {}
 
@@ -16,22 +21,19 @@ module.exports = function (opts) {
   }
 
   levels.forEach(function (level) {
-    logger[level] = shouldLog(level) ? log : noop
+    var normalizedLevel
+
+    if (opts.stderr) {
+      normalizedLevel = 'error'
+    } else {
+      normalizedLevel = level in levelMap ? levelMap[level] : level
+    }
+    if (normalizedLevel) {
+      logger[level] = shouldLog(level) ? log : noop
+    }
 
     function log () {
       var prefix = opts.prefix
-      var normalizedLevel
-
-      if (opts.stderr) {
-        normalizedLevel = 'error'
-      } else {
-        switch (level) {
-          case 'trace': normalizedLevel = 'info'; break
-          case 'debug': normalizedLevel = 'info'; break
-          case 'fatal': normalizedLevel = 'error'; break
-          default: normalizedLevel = level
-        }
-      }
 
       if (prefix) {
         if (typeof prefix === 'function') prefix = prefix(level)

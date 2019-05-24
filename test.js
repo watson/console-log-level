@@ -3,20 +3,24 @@
 var test = require('tape')
 var Logger = require('./')
 
+var origDebug = console.debug
 var origInfo = console.info
 var origWarn = console.warn
 var origError = console.error
 
 var mock = function () {
+  console.debug = function () { this.debugCalled = true }
   console.info = function () { this.infoCalled = true }
   console.warn = function () { this.warnCalled = true }
   console.error = function () { this.errorCalled = true }
 }
 
 var restore = function () {
+  delete console.debugCalled
   delete console.infoCalled
   delete console.warnCalled
   delete console.errorCalled
+  console.debug = origDebug
   console.info = origInfo
   console.warn = origWarn
   console.error = origError
@@ -225,4 +229,54 @@ test('set prefix with function', function (t) {
   logger.info('foo %s', 'bar')
   logger.warn('foo %s', 'bar')
   logger.error('foo %s', 'bar')
+})
+
+test('level map', function (t) {
+  var logger = Logger()
+
+  t.equal(typeof logger.fatal, 'function', 'fatal is function')
+
+  mock()
+  logger.fatal('foo')
+  t.notOk(console.debugCalled, 'debug not called')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn called')
+  t.ok(console.errorCalled, 'error not called')
+  restore()
+
+  logger = Logger({
+    level: 'trace',
+    levelMap: {
+      'trace': 'warn',
+      'fatal': false
+    }
+  })
+
+  mock()
+  logger.trace('foo')
+  t.notOk(console.debugCalled, 'debug not called')
+  t.notOk(console.infoCalled, 'info not called')
+  t.ok(console.warnCalled, 'warn called')
+  t.notOk(console.errorCalled, 'error not called')
+  restore()
+
+  mock()
+  logger.debug('foo')
+  t.ok(console.debugCalled, 'debug called')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.notOk(console.errorCalled, 'error not called')
+  restore()
+
+  mock()
+  logger.warn('foo')
+  t.notOk(console.debugCalled, 'debug not called')
+  t.notOk(console.infoCalled, 'info not called')
+  t.ok(console.warnCalled, 'warn called')
+  t.notOk(console.errorCalled, 'error not called')
+  restore()
+
+  t.equal(logger.fatal, undefined, 'fatal undefined')
+
+  t.end()
 })
