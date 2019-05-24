@@ -232,8 +232,8 @@ test('custom log function', function (t) {
   var logMessage
   var logger
 
-  logger = Logger({ 
-    logFunc: (level, message) => {
+  logger = Logger({
+    logFunc: function (level, message) {
       logLevel = level
       logMessage = message
     }
@@ -250,8 +250,8 @@ test('custom log function', function (t) {
   t.notOk(console.errorCalled, 'error not called')
   restore()
 
-  logger = Logger({ 
-    logFunc: () => {
+  logger = Logger({
+    logFunc: function () {
       console.error('hardcode error!')
     }
   })
