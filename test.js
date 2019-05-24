@@ -226,3 +226,46 @@ test('set prefix with function', function (t) {
   logger.warn('foo %s', 'bar')
   logger.error('foo %s', 'bar')
 })
+
+test('custom log function', function (t) {
+  var logLevel
+  var logMessage
+  var logger
+
+  logger = Logger({
+    logFunc: function (level, message) {
+      logLevel = level
+      logMessage = message
+    }
+  })
+
+  logLevel = null
+  logMessage = null
+  mock()
+  logger.warn('warn message', 'with second args!')
+  t.equal(logLevel, 'warn', 'warn level')
+  t.equal(logMessage, 'warn message with second args!', 'warn message')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.notOk(console.errorCalled, 'error not called')
+  restore()
+
+  logger = Logger({
+    logFunc: function () {
+      console.error('hardcode error!')
+    }
+  })
+
+  logLevel = null
+  logMessage = null
+  mock()
+  logger.info('info message')
+  t.equal(logLevel, null, 'log level null')
+  t.equal(logMessage, null, 'log message null')
+  t.notOk(console.infoCalled, 'info not called')
+  t.notOk(console.warnCalled, 'warn not called')
+  t.ok(console.errorCalled, 'error called')
+  restore()
+
+  t.end()
+})

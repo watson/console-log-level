@@ -8,6 +8,7 @@ var noop = function () {}
 module.exports = function (opts) {
   opts = opts || {}
   opts.level = opts.level || 'info'
+  var logFunc = (typeof opts.logFunc === 'function' ? opts.logFunc : null)
 
   var logger = {}
 
@@ -38,7 +39,11 @@ module.exports = function (opts) {
         arguments[0] = util.format(prefix, arguments[0])
       }
 
-      console[normalizedLevel](util.format.apply(util, arguments))
+      if (logFunc) {
+        logFunc(level, util.format.apply(util, arguments))
+      } else {
+        console[normalizedLevel](util.format.apply(util, arguments))
+      }
     }
   })
 
