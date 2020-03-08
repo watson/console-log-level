@@ -27,7 +27,7 @@
   "homepage": "https://github.com/watson/console-log-level",
   "dependencies": {},
   "devDependencies": {
-    "standard": "^12.0.1",
+    "standard": "^13.0.0",
     "tape": "^4.10.1"
   },
   "coordinates": [
