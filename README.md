@@ -56,7 +56,7 @@ argument.
 
 ### stderr
 
-A `boolean` to log everything to stderr. Defauls to `false`.
+A `boolean` to log everything to stderr. Defaults to `false`.
 
 ## License
 
